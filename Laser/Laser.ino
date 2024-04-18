@@ -9,7 +9,7 @@ const char* password = "secureVSRO4wl@n#17" ; //wlan passwort reinpacken
 const int ldrPin = 33; 
 
 
-const int threshold = 500; //wie hell muss testen
+const int threshold = 1400; //wie hell muss testen
 
 void setup() {
   Serial.begin(115200); 
@@ -45,7 +45,7 @@ void loop() {
 void sendSignal() {
   //TCP oder so
   WiFiClient client;
-  const int serverPort = 80; // kp welcher port
+  const int serverPort = 6910; // kp welcher port
   if (client.connect("10.1.252.159", serverPort)) { //ip
     // Send a simple message
     client.println("Got you!");
