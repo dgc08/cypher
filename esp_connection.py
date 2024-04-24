@@ -1,16 +1,16 @@
 from classes import Monitor, Event
 
-from time import sleep, time
+from time import time
 import socket
 import select
 
+HOST = ""
+PORT = 6910
 
 class Laser(Monitor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        HOST = ""
-        PORT = 6910
-        self.BUFFER_SIZE = 1024  # Adjust buffer size as needed
+        self.BUFFER_SIZE = 1024
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -23,7 +23,7 @@ class Laser(Monitor):
 
     def _get_event(self):
         readable, _, _ = select.select(self.read_list, [], [], 0.1)
-        received_data = ''
+        received_data = ""
         for s in readable:
             if s is self.server_socket:
                 conn, addr = self.server_socket.accept()
@@ -42,6 +42,14 @@ class Laser(Monitor):
                 else:
                     pass
                 self.read_list.remove(s)
-        if received_data.strip() == "":
+
+        received_data = received_data.strip()
+        if received_data == "":
             return None
-        return Event(time(), self._id, received_data.strip())
+        elif received_data == "0":
+            if self.get_status():
+                conn.send("1".encode('utf-8'))
+            else:
+                conn.send("0".encode('utf-8'))
+        elif received_data == "1":
+            return Event(time(), self._id, Event.events.COMPONENT_ACTIVATED, received_data.strip())
