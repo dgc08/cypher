@@ -12,6 +12,7 @@
   
   <br>
   If the component is off, the ESP32 should periodically sleep using esp_deep_sleep for 10 seconds and check the status again
+  -> Both ESPs check the status at the rasbpi's socket
   <br><br>
   
   Example code for deep sleep (by chatgpt):  
@@ -37,6 +38,3 @@
 - Client: "1": Tripwire activated
   
   Server has nothing to answer
-
-# Connection ESP32 1 - ESP32 2
-Keine ahnung linus denk dir was aus / Machen wir später
