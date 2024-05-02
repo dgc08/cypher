@@ -52,31 +52,29 @@ void loop() {
       Serial.print("Unknown response: ");
       Serial.println(response);
   }
+  client.stop();
+  client.connect("10.1.252.159", serverPort);
 
-  // Read LDR
-  int ldrValue = analogRead(ldrPin);
+  for (unsigned long i = 0; i < 100 * 1000; i++) {
+    // Read LDR
+    int ldrValue = analogRead(ldrPin);
 
-  // Print the LDR value to the serial monitor
-  //Serial.print("Laser Status: ");
-  //Serial.println(ldrValue);
+    // Print the LDR value to the serial monitor
+    //Serial.print("Laser Status: ");
+    //Serial.println(ldrValue);
 
-  // Tripwire an?
-  if (ldrValue < threshold) {
-    // Send a signal via WiFi
-    if (!was_activated) {
-      sendSignal(client);
-      was_activated = true;
+    // Tripwire an?
+    if (ldrValue < threshold) {
+      // Send a signal via WiFi
+      if (!was_activated) {
+        client.println("1");
+        was_activated = true;
+      }
     }
-  }
-  else {
-    was_activated = false
+    else {
+      was_activated = false;
+    }
   }
 
   client.stop();
-  delay(1000); //kein spam pls
-}
-
-void sendSignal(WiFiClient &client) {
-  // Send a simple message
-  client.println("1");
 }
