@@ -9,7 +9,7 @@ const char* password = "secureVSRO4wl@n#17" ; //wlan passwort reinpacken
 const int ldrPin = 33; 
 
 
-const int threshold = 1400; //wie hell muss testen
+const int threshold = 1000; //wie hell muss testen
 bool was_activated = false;
 
 void setup() {
@@ -23,23 +23,26 @@ void setup() {
     Serial.print("-");//funny
   }
   Serial.println("Connected to WiFi");
-  sendSignal();
 }
 
 void loop() {
   //TCP oder so
   WiFiClient client;
   const int serverPort = 6910; // kp welcher port
-  if (!(client.connect("10.1.252.159", serverPort))) { //ip
+  const char* ip = "10.1.253.67";
+  if (!(client.connect(ip, serverPort))) { //ip
     Serial.println("Verkackt mit Raspi zu reden");
     return;
   }
+  Serial.println("New Iteration");
   client.println("0");
   while (client.available() == 0) {
     delay(100);
   }
 
   char response = client.read();
+
+  Serial.println(response);
 
   switch (response) {
     case '0':
@@ -53,9 +56,11 @@ void loop() {
       Serial.println(response);
   }
   client.stop();
-  client.connect("10.1.252.159", serverPort);
+  client.connect(ip, serverPort);
+  Serial.println("Got status, debugval:");
+  Serial.println(analogRead(ldrPin));
 
-  for (unsigned long i = 0; i < 100 * 1000; i++) {
+  for (unsigned long long i = 0; i < 80 * 1000000; i++) { // The loop takes ~5s on the processor of the ESP 32
     // Read LDR
     int ldrValue = analogRead(ldrPin);
 
@@ -67,14 +72,19 @@ void loop() {
     if (ldrValue < threshold) {
       // Send a signal via WiFi
       if (!was_activated) {
+        Serial.println("Activation");
         client.println("1");
         was_activated = true;
       }
     }
-    else {
+    else if (was_activated) {
       was_activated = false;
+      Serial.println("Deactivation");
+      Serial.println(ldrValue);
     }
   }
+  Serial.println("End Iteration");
+
 
   client.stop();
 }
