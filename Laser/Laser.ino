@@ -56,7 +56,6 @@ void loop() {
       Serial.println(response);
   }
   client.stop();
-  client.connect(ip, serverPort);
   Serial.println("Got status, debugval:");
   Serial.println(analogRead(ldrPin));
 
@@ -72,8 +71,11 @@ void loop() {
     if (ldrValue < threshold) {
       // Send a signal via WiFi
       if (!was_activated) {
-        Serial.println("Activation");
+        Serial.print("Activation: ");
+        client.connect(ip, serverPort);
         client.println("1");
+        client.stop();
+        Serial.println(" sended");
         was_activated = true;
       }
     }
@@ -81,10 +83,8 @@ void loop() {
       was_activated = false;
       Serial.println("Deactivation");
       Serial.println(ldrValue);
+      delay(500);
     }
   }
   Serial.println("End Iteration");
-
-
-  client.stop();
 }
