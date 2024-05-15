@@ -1,5 +1,4 @@
 #include <WiFi.h>
-#include <esp_sleep.h>
 
 // WLAN zeug
 const char* ssid = "VSRO-Paed"; //ssid reinpacken
@@ -46,8 +45,9 @@ void loop() {
 
   switch (response) {
     case '0':
-      esp_sleep_enable_timer_wakeup(10 * 1000000); // 10 seconds in microseconds
-      esp_deep_sleep_start();
+      Serial.println("sleeping");
+      delay(10 * 1000); // 10 Secs
+      Serial.println("Sleep stop");
       return;
     case '1':
       break;
