@@ -2,6 +2,11 @@
 from classes import Monitor, Event
 from time import time
 from random import randint
+from picamera2 import Picamera2, Preview
+
+camera = Picamera2()
+camera_config = camera.create_prewiev_configuration()
+camera.configure(camera_config)
 
 class Camera(Monitor):
     def _get_event(self):
