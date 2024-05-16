@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+
 from esp_connection import Laser
-from log import Print_Logger, Flask_App
+from log import Print_Logger, Discord_Bot
 from threading import Thread
 
-loggers = [Print_Logger(), Flask_App()]
+loggers = [Print_Logger(), Discord_Bot]
 monitors = [Laser("laser_esp")]
+on_event_logger = [Camera]
 
 def cons():
     a = input()
@@ -30,6 +33,11 @@ if __name__ == '__main__':
                 events.append(event)
 
         if events != []:
+            for i in on_event_logger:
+                event = i.check_for_events()
+                if event is not None:
+                    events.append(event)
+
             for event in events:
                 for logger in loggers:
                     logger.log(event)
