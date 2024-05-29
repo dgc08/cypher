@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from classes import Monitor, Event
 from time import time
-from random import randint
+import uuid
 from picamera2 import Picamera2, Preview
 
 camera = Picamera2()
@@ -10,8 +10,7 @@ camera.configure(camera_config)
 
 class Camera(Monitor):
     def _get_event(self):
-        filename = "~/cypher/images/" + str(randint(1, 2147483647)) + ".jpg"
-
-
+        id = uuid.uuid4()
+        filename = "~/cypher/images/" + str(id) + ".jpg"
 
         return Event(time(), self._id, Event.events.COMPONENT_ACTIVATED, filename)
