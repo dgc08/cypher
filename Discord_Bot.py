@@ -7,6 +7,7 @@ import asyncio
 import random
 import time
 import threading
+import uuid
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -24,6 +25,8 @@ with open("token.txt") as f:
             token = line.strip()
             break
 
+async def send_image(filename, text, channel):
+    await channel.send(text, file=discord.File(filename))
 
 eventqueue = []
 @bot.event
@@ -54,7 +57,7 @@ async def on_ready():
 # Copied from another one of my projects
 def run(func, *args, **kwargs):
         global eventqueue
-        id = random.randint(1, 2147483647)
+        id = uuid.uuid4()
         eventqueue.append([func, args, kwargs, id])
         while eventqueue[0][3] != id and len(eventqueue[0]) < 5:
             time.sleep(0.1)
@@ -67,9 +70,16 @@ def run(func, *args, **kwargs):
 class Discord_Bot(Logger):
     def log(self, event):
         # Just print log but in dc for now, will change later (TODO)
-        msg = event.__str__()
+        #msg = event.__str__()
         channel = bot.get_channel(channel_id)
-        run(channel.send, msg)
+        #run(channel.send, msg)
+        if (event.event_type != 1): # if Component not activated
+            return
+
+        if event.monitor_origin == "laser_esp":
+            run(channel.send, f"Got you! Tripwire triggered on <t:{event.timestamp}>")
+        if event.monitor_origin == "cam":
+            run(send_image, f"Give me a cock! on <t:{event.timestamp}>", channel)
 
 
     def __init__(self):
@@ -80,6 +90,7 @@ class Discord_Bot(Logger):
         bot_thread.daemon = True
         bot_thread.start()
 
+        # Block thread while bot not ready
         while not bot_status:
             time.sleep(0.1)
 
@@ -90,6 +101,6 @@ if __name__ == "__main__":
     logger.log("\nOne of my cameras is broken!- Oh, wait, okay. It's fine.")
     try:
         while 1:
-            time.sleep(.1)
+            time.sleep(0.1)
     except KeyboardInterrupt:
         exit()
