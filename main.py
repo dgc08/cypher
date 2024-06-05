@@ -2,11 +2,13 @@
 
 from esp_connection import Laser
 from log import Print_Logger, Discord_Bot
+from Camera import Camera
+
 from threading import Thread
 
 loggers = [Print_Logger(), Discord_Bot]
 monitors = [Laser("laser_esp")]
-on_event_logger = [Camera]
+on_event_logger = [Camera("cam")]
 
 def cons():
     a = input()
