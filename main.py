@@ -6,7 +6,7 @@ from Camera import Camera
 
 from threading import Thread
 
-loggers = [Print_Logger(), Discord_Bot]
+loggers = [Print_Logger(), Discord_Bot()]
 monitors = [Laser("laser_esp")]
 on_event_logger = [Camera("cam")]
 

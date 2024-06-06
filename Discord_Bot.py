@@ -9,6 +9,8 @@ import time
 import threading
 import uuid
 
+from os import remove
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -27,6 +29,7 @@ with open("token.txt") as f:
 
 async def send_image(filename, text, channel):
     await channel.send(text, file=discord.File(filename))
+    remove(filename)
 
 eventqueue = []
 @bot.event
@@ -56,19 +59,27 @@ async def on_ready():
 
 # Copied from another one of my projects
 def run(func, *args, **kwargs):
-        global eventqueue
-        id = uuid.uuid4()
-        eventqueue.append([func, args, kwargs, id])
-        while eventqueue[0][3] != id and len(eventqueue[0]) < 5:
-            time.sleep(0.1)
-        while len(eventqueue[0]) == 4:
-            time.sleep(0.1)
-        result = eventqueue[0][4]
-        eventqueue.pop(0)
-        return result
+    global eventqueue
+    id = uuid.uuid4()
+    eventqueue.append([func, args, kwargs, id])
+    while eventqueue[0][3] != id and len(eventqueue[0]) < 5:
+        time.sleep(0.1)
+    while len(eventqueue[0]) == 4:
+        time.sleep(0.1)
+    result = eventqueue[0][4]
+    eventqueue.pop(0)
+    return result
 
 class Discord_Bot(Logger):
     def log(self, event):
+        event.timestamp = int(event.timestamp)
+        if ((time.time() - self.last_log) < 5):
+            if event.monitor_origin == "cam":
+                remove(event.data)
+            return
+        elif event.monitor_origin == "cam":
+            self.last_log = time.time()
+
         # Just print log but in dc for now, will change later (TODO)
         #msg = event.__str__()
         channel = bot.get_channel(channel_id)
@@ -77,10 +88,12 @@ class Discord_Bot(Logger):
             return
 
         if event.monitor_origin == "laser_esp":
-            run(channel.send, f"Got you! Tripwire triggered on <t:{event.timestamp}>")
+            #run(channel.send, f"Got you! Tripwire triggered on <t:{event.timestamp}>")
+            pass
         if event.monitor_origin == "cam":
-            run(send_image, f"Give me a cock! on <t:{event.timestamp}>", channel)
+            run(send_image, event.data ,f"Got you! <t:{event.timestamp}>", channel)
 
+        print ("Send something to DC")
 
     def __init__(self):
         def run_bot():
@@ -92,13 +105,15 @@ class Discord_Bot(Logger):
 
         # Block thread while bot not ready
         while not bot_status:
-            time.sleep(0.1)
+            time.sleep(0)
 
+        self.last_log = -1
 
 if __name__ == "__main__":
     logger = Discord_Bot()
-    print()
     logger.log("\nOne of my cameras is broken!- Oh, wait, okay. It's fine.")
+    print()
+    #logger.log()
     try:
         while 1:
             time.sleep(0.1)
