@@ -6,20 +6,25 @@ import uuid
 from picamera2 import Picamera2, Preview
 from os import getenv
 
-camera = Picamera2()
-camera_config = camera.create_still_configuration()
-camera.configure(camera_config)
+camera_there = True
+try:
+    camera = Picamera2()
+    camera_config = camera.create_still_configuration()
+    camera.configure(camera_config)
+except:
+    camera_there = False
 
 class Camera(Monitor):
     def _get_event(self):
         id = uuid.uuid4()
         filename = getenv("HOME") + "/cypher/images/" + str(id) + ".jpg"
 
-        #camera.start_preview(Preview.QTGL)
-        camera.start()
-        camera.capture_file(filename)
+        if camera_there:
+            #camera.start_preview(Preview.QTGL)
+            camera.start()
+            camera.capture_file(filename)
 
-        return Event(time(), self._id, Event.events.COMPONENT_ACTIVATED, filename)
+            return Event(time(), self._id, Event.events.COMPONENT_ACTIVATED, filename)
 
 if __name__ == "__main__":
     cam = Camera("mygog")
