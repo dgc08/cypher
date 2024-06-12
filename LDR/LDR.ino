@@ -10,7 +10,7 @@ const char* password = WLAN_PASSWORD ; //wlan passwort reinpacken
 const int ldrPin = 33; 
 
 
-const int threshold = 1000; //wie hell muss testen
+const int threshold = 3000; //wie hell muss testen
 bool was_activated = false;
 
 void setup() {
