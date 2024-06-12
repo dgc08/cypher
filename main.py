@@ -6,8 +6,8 @@ from Camera import Camera
 
 from threading import Thread
 
-loggers = [Print_Logger(), Discord_Bot()]
 monitors = [Laser("laser_esp")]
+loggers = [Print_Logger(), Discord_Bot(monitors[0].set_status)]
 on_event_logger = [Camera("cam")]
 
 def cons():
