@@ -19,6 +19,8 @@ channel_id = 1240649755143438468
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot_status = False
 
+act_mirror = True
+
 activate_fucntion = lambda x: None
 
 with open("token.txt") as f:
@@ -60,6 +62,9 @@ async def on_ready():
         except IndexError:
             pass
 
+def info(ctx):
+    return f"Cypher Security System\nLaser is {act_mirror}"
+
 @bot.command(
     name="info"
 )
@@ -68,10 +73,19 @@ async def info_command(ctx):
     await ctx.send(msg)
 
 @bot.command(
+    name="poweroff"
+)
+async def power(ctx):
+    await ctx.send(poweroff)
+    import os
+    os.system("poweroff")
+
+@bot.command(
     name="deactivate"
 )
 async def deactivate(ctx):
     activate_function(False)
+    act_mirror = False
     await ctx.send("Deactivated tripwire.")
 
 @bot.command(
@@ -79,6 +93,7 @@ async def deactivate(ctx):
 )
 async def activate(ctx):
     activate_function(True)
+    act_mirror = True
     await ctx.send("Activated tripwire.")
 
 # Copied from another one of my projects
