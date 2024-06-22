@@ -20,6 +20,7 @@ void setup() {
   Serial.println("Connected to WiFi");
 }
 
+// executed every 10 secs
 void loop() {
   //TCP oder so
   WiFiClient client;
@@ -30,7 +31,7 @@ void loop() {
     return;
   }
   Serial.println("New Iteration");
-  client.println("0");
+  client.println("0"); // ask raspi if tripwire is activated
   while (client.available() == 0) {
     delay(100);
   }
