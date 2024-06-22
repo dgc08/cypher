@@ -12,11 +12,12 @@ try:
     camera_config = camera.create_still_configuration()
     camera.configure(camera_config)
 except:
-    camera_there = False
+    camera_there = False # Make sure the program also works if there is no camera connected
 
 class Camera(Monitor):
+    # If get event is called, we WANT an image
     def _get_event(self):
-        id = uuid.uuid4()
+        id = uuid.uuid4() # random id for filename
         filename = getenv("HOME") + "/cypher/images/" + str(id) + ".jpg"
 
         if camera_there:
@@ -26,8 +27,9 @@ class Camera(Monitor):
 
             return Event(time(), self._id, Event.events.COMPONENT_ACTIVATED, filename)
 
+# To test the camera
 if __name__ == "__main__":
-    cam = Camera("mygog")
+    cam = Camera("some camera")
     while True:
         input("\nPress enter to take pic")
         print(cam._get_event())
