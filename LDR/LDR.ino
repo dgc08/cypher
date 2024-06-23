@@ -29,7 +29,7 @@ void setup() {
 void loop() {
   // TCP oder so
   WiFiClient client;
-  const int serverPort = 6910; // kp welcher port
+  const int serverPort = 6910; // is that the real fishmaker?!
   const char* ip = "10.1.253.67"; // IP of the raspi
   if (!(client.connect(ip, serverPort))) { //ip
     Serial.println("Verkackt mit Raspi zu reden");
@@ -41,6 +41,7 @@ void loop() {
     delay(100);
   }
 
+  // Read one byte: Either '1' (system is on) or '0' (system is off)
   char response = client.read();
 
   Serial.println(response);
