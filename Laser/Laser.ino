@@ -36,6 +36,7 @@ void loop() {
     delay(100);
   }
 
+  // Read one byte: Either '1' (system is on) or '0' (system is off)
   char response = client.read();
 
   Serial.println(response);

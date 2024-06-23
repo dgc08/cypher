@@ -2,17 +2,22 @@
 
 # Guten Tag
 
+# in den Kommentaren: tripwire = Lichtschranke
+
 from esp_connection import Laser
 from log import Print_Logger, Discord_Bot
 from Camera import Camera
 
 from threading import Thread
 
-monitors = [Laser("laser_esp")] # Takes care of both ESPs
+# Monitors are classes that can provide Events for the loggers to log
+monitors = [Laser("laser_esp")] # Takes care of both ESPs, essentially the class for the tripwire
 loggers = [Print_Logger(), Discord_Bot(monitors[0].set_status)] # Two loggers: One that just prints stuff and the discord bot
                                                                 # The discord bot needs a method to turn off the tripwire
 
-on_event_logger = [Camera("cam")]                               # On event logger are monitors that only log if the other monitors give a signal
+# These are also monitors idk why i called them loggers
+# On event logger are monitors that only log if a normal monitor gave an event
+on_event_logger = [Camera("cam")]
 
 # Only for testing use !activate and !deactivate on the discord bot
 def cons():
@@ -25,8 +30,6 @@ def cons():
     else:
         print("vergagt")
     cons()
-
-# monitors[0].set_status(False)
 
 if __name__ == '__main__':
     cons_thread = Thread(target=cons) # you could turn off the tripwire from the console if you'd want (not recommended)

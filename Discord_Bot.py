@@ -1,4 +1,4 @@
-# For the logger you have to go a bit down
+# For the logger class you have to go a bit down
 
 from classes import Logger
 
@@ -38,7 +38,9 @@ with open("token.txt") as f:
 
 # Helper function to send an image with a text
 async def send_image(filename, text, channel):
+    # send image with discord.py
     await channel.send(text, file=discord.File(filename))
+    # delete the file
     remove(filename)
 
 eventqueue = []
@@ -148,6 +150,8 @@ class Discord_Bot(Logger):
             #run(channel.send, f"Got you! Tripwire triggered on <t:{event.timestamp}>")
             pass
         if event.monitor_origin == "cam":
+            # Queue my send_image helper fucntion to be run (look at run())
+            # event.data = filename of image
             run(send_image, event.data ,f"Got you! <t:{event.timestamp}>", channel)
 
         print ("Send something to DC")
